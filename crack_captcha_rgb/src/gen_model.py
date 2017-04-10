@@ -5,18 +5,9 @@ from gen_image import text_to_array
 from config import MAX_CAPTCHA, CHAR_SET_LEN, IMAGE_HEIGHT, IMAGE_WIDTH, MAX_ACCURACY
 from gen_image import gen_require_captcha_image
 
-x_input = tf.placeholder(tf.float32, [None, IMAGE_HEIGHT * IMAGE_WIDTH])
+x_input = tf.placeholder(tf.float32, [None, IMAGE_HEIGHT * IMAGE_WIDTH * 3])  # using the rgb image
 y_input = tf.placeholder(tf.float32, [None, CHAR_SET_LEN * MAX_CAPTCHA])
 keep_prob = tf.placeholder(tf.float32)
-
-
-# 把彩色图像转为灰度图像（色彩对识别验证码没有什么用,对于抽取特征也没啥用）
-def convert2gray(img):
-    if len(img.shape) > 2:
-        gray = np.mean(img, -1)
-        return gray
-    else:
-        return img
 
 
 def __weight_variable(shape, stddev=0.01):
@@ -40,26 +31,22 @@ def __max_pool_2x2(x):
 
 # 100个一个批次
 def gen_next_batch(batch_size=100):
-    batch_x = np.zeros([batch_size, IMAGE_HEIGHT * IMAGE_WIDTH])
+    batch_x = np.zeros([batch_size, IMAGE_HEIGHT * IMAGE_WIDTH * 3])
     batch_y = np.zeros([batch_size, MAX_CAPTCHA * CHAR_SET_LEN])
 
     for i in xrange(batch_size):
         text, image = gen_require_captcha_image()
-
-        # 转成灰度图片，因为颜色对于提取字符形状是没有意义的
-        image = convert2gray(image)
-
-        batch_x[i, :] = image.flatten() / 255
+        batch_x[i, :] = image.flatten() / 255.0
         batch_y[i, :] = text_to_array(text)
 
     return batch_x, batch_y
 
 
 def create_layer(x_input, keep_prob):
-    x_image = tf.reshape(x_input, shape=[-1, IMAGE_WIDTH, IMAGE_HEIGHT, 1])
+    x_image = tf.reshape(x_input, shape=[-1, IMAGE_WIDTH, IMAGE_HEIGHT, 3])
 
     # 定义第1个卷积层
-    w_c1 = __weight_variable([5, 5, 1, 32], stddev=0.1)  # 3x3 第一层32个卷积核 采用黑白色
+    w_c1 = __weight_variable([5, 5, 3, 32], stddev=0.1)  # 3x3 第一层32个卷积核 采用黑白色
     b_c1 = __bias_variable([32], stddev=0.1)
     h_c1 = tf.nn.relu(tf.nn.bias_add(__conv2d(x_image, w_c1), b_c1))  # 定义第一个卷积层
     h_pool1 = __max_pool_2x2(h_c1)  # 定义第一个池化层
@@ -128,7 +115,7 @@ def train():
         acc = 0.0
         i = 0
 
-        while acc < MAX_ACCURACY:
+        while True:
             i = i + 1
             batch_x, batch_y = gen_next_batch(64)
             _, _loss = sess.run([train_step, loss],

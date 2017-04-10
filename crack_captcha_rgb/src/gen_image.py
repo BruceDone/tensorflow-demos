@@ -27,7 +27,7 @@ def __gen_random_captcha_text(char_set=config.VALIDATE_STRING, size=None):
 
 
 def gen_random_captcha_image():
-    image = ImageCaptcha(width=config.IMAGE_WIDTH, height=config.IMAGE_HEIGHT,font_sizes=[config.FONT_SIZE])
+    image = ImageCaptcha(width=config.IMAGE_WIDTH, height=config.IMAGE_HEIGHT, font_sizes=[config.FONT_SIZE])
 
     text = __gen_random_captcha_text(size=config.MAX_CAPTCHA)
     captcha = image.generate(text)
@@ -42,18 +42,6 @@ def gen_require_captcha_image():
         text, image = gen_random_captcha_image()
         if image.shape == (config.IMAGE_HEIGHT, config.IMAGE_WIDTH, 3):
             return text, image
-
-
-# 把彩色图像转为灰度图像（色彩对识别验证码没有什么用,对于抽取特征也没啥用）
-def convert2gray(img):
-    if len(img.shape) > 2:
-        gray = np.mean(img, -1)
-        # 上面的转法较快，正规转法如下
-        # r, g, b = img[:,:,0], img[:,:,1], img[:,:,2]
-        # gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
-        return gray
-    else:
-        return img
 
 
 # prepare the char to index
@@ -100,6 +88,7 @@ def array_to_text(arr):
         text.append(num_dict_tmp[key_index])
     return ''.join(text)
 
+
 def show_image_text():
     text, image = gen_random_captcha_image()
 
@@ -109,6 +98,7 @@ def show_image_text():
     plt.imshow(image)
 
     plt.show()
+
 
 #
 if __name__ == '__main__':
