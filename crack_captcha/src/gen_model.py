@@ -140,7 +140,7 @@ def train():
             if i % 50 == 0:
                 batch_x_test, batch_y_test = gen_next_batch(100)
                 acc = sess.run(accuracy, feed_dict={x_input: batch_x_test, y_input: batch_y_test, keep_prob: 1.})
-                print('step is %s' % i, 'and accy is %s' % MAX_ACCURACY)
+                print('step is %s' % i, 'and accy is %s' % acc)
                 # 如果准确率大于50%,保存模型,完成训练
                 if acc > MAX_ACCURACY:
                     print('current acc > %s  ,stop now' % MAX_ACCURACY)
