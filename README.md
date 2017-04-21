@@ -4,6 +4,7 @@ all kinds of demos of tensorflow code
 # demo list 
 * crack_captcha -- gen image to crack the captcha.
 * crack_captcha_rgb -- since the captcha will in rgb mode ,so just train a model to crack it.
+* crack_captcha_3d -- the data source comes from the sogou wexin capthca.
 * [TODO]mnist
 * [TODO]cat_vs_dog 
 
@@ -11,10 +12,17 @@ all kinds of demos of tensorflow code
 
 ## crack_captcha
 * install the requirements 
-*  `python gen_model.py` it will start to train the model 
-* after finish train model ,`python validate` will do validate the image result
+* `python gen_model.py` it will start to train the model 
+* after finish train model ,`python validate.py` will do validate the image result
 
 ## crack_captcha_rgb
 * install the requirements
-*  `python gen_model.py` it will start to train the model
-* after finish train model ,`python validate` will do validate the image result
+* `python gen_model.py` it will start to train the model
+* after finish train model ,`python validate.py` will do validate the image result
+
+## crack_captcha_3d
+
+* install the requirements
+* `python train_model.py` it will start to train the model
+* after finish train model ,`python validate.py` will do validate the image result
+
